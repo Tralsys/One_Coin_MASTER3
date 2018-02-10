@@ -25,6 +25,9 @@
 #ifndef _GIPI_H
 #define _GIPI_H
 
+void GIPISetup(int, int, int); //F閾値,N閾値,R閾値
+void GIPISetup(int, int, int, int); //F閾値,N閾値,R閾値,Baudrate
+
 void ButtonSet(int, int[], int[]);//個数、ピン番号、役割
 void ButtonRead();//全部Readする
 void ButtonRead(int);//指定された番号だけReadする

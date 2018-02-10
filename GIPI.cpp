@@ -14,7 +14,13 @@ float masal = 0;
 float brkal = 0;
 float btnari = 0;
 
+void GIPISetup(int revF, int revN, int revR) {
 
+}
+
+void GIPISetup(int revF, int revN, int revR, int baud) {
+
+}
 
 void ButtonSet(int HowMany, int PinNum[], int BtnWork[])
 {
@@ -49,32 +55,32 @@ void ButtonRead()
     }
   }
 }
-void ButtonRead(int i){
+void ButtonRead(int i) {
   //指定された番号だけReadする
   int dr = digitalRead(BtPin[i]);
-    if (dr != bthis[i] && BtWork[i] > 0) {
-      if (dr == LOW) {
-        bthis[i] = dr;
-        Serial.print("TOK");
-        Serial.print(BtWork[i]);
-        Serial.print("D\r");
-      } else {
-        bthis[i] = dr;
-        Serial.print("TOK");
-        Serial.print(BtWork[i]);
-        Serial.print("U\r");
-      }
+  if (dr != bthis[i] && BtWork[i] > 0) {
+    if (dr == LOW) {
+      bthis[i] = dr;
+      Serial.print("TOK");
+      Serial.print(BtWork[i]);
+      Serial.print("D\r");
+    } else {
+      bthis[i] = dr;
+      Serial.print("TOK");
+      Serial.print(BtWork[i]);
+      Serial.print("U\r");
     }
+  }
 }
 
-void ButtonRead(int i, int ThisBtWork){
+void ButtonRead(int i, int ThisBtWork) {
   //ピン番号、役割
   //Historyにかかわらず送信するため利用時はino側での対策推奨
-  if(digitalRead(i)==LOW){
+  if (digitalRead(i) == LOW) {
     Serial.print("TOK");
     Serial.print(ThisBtWork);
     Serial.print("D\r");
-  }else{
+  } else {
     Serial.print("TOK");
     Serial.print(ThisBtWork);
     Serial.print("U\r");
