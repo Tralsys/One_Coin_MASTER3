@@ -1,24 +1,138 @@
 #include "GIPI.h"
 #include "arduino.h"
 int BtNum = 0;
-int BtPin[64];
-int BtWork[64];
+int BtPin[16];
+int BtWork[16];
+
 float sikiFN = 0;
 float sikiNR = 0;
+
 float where = 0;
 float rev = 0;
 int wh = 0;
 int wh2 = 0;
+
 float reval = 0;
 float masal = 0;
 float brkal = 0;
 float btnari = 0;
 
-void GIPISetup(int revF, int revN, int revR) {
+int brnum = 0;//制動段数
+int nonum = 0;//力行段数
+int yonum = 0; //抑速段数
+
+int rever = 0; //Pin Num
+int mascon = 0; //Pin Num
+int brakevr = 0; //Pin Num
+int yokusp = 0; //Pin Num
+
+int brakes[32];//制動VR値
+int notchs[32];//力行VR値
+int yokus[32];//抑速VR値
+
+
+void GIPISetup(int levF, int levN, int levR) {
+  //revX = Xsiki
+  //
+  //BaudRate Default 9600
+  Serial.begin(9600);
+  while (!Serial);
+  sikiFN = levN + (levF - levN) / 2;//levN>levFでも対応。
+  sikiNR = levN - (levN - levR) / 2;
+}
+
+void GIPISetup(int levF, int levN, int levR, int baud) {
+  //levX::レバーサーXの可変抵抗値。
+  Serial.begin(baud);
+  while (!Serial);
+  sikiFN = levN + (levF - levN) / 2;
+  sikiNR = levN - (levN - levR) / 2;
+}
+void RevPinSet(int Rev, int Rik, int Sei) {
+  //レバーサー、力行ハンドル、制動ハンドル  のピン番号
+  rever = Rev; //Pin Num
+  mascon = Rik; //Pin Num
+  brakevr = Sei; //Pin Num
+}
+void RevPinSet(int Rev, int Rik, int Sei, int Yok) {
+  //レバーサー、力行ハンドル、制動ハンドル、抑速ハンドル
+  rever = Rev; //Pin Num
+  mascon = Rik; //Pin Num
+  brakevr = Sei; //Pin Num
+  yokusp = Yok; //Pin Num
+
+}
+void RevPinValue(int Rik[], int Sei[]) {
+  //各段AnalogRead値(力行, 制動)
+  if (brnum > 0) {
+    for (int i = 0; i < brnum; i++) {
+      brakes[i] = Sei[i]; //制動VR値
+    }
+  } else if (brnum == 0) {
+    Serial.println("Error! You must put 'RevHowMany()' before 'RevPinValue()'!");
+  } else {
+    Serial.println("Error! You must put natual number in 'RevHowMany()'!");
+  }
+  if (nonum > 0) {
+    for (int i = 0; i < nonum; i++) {
+      notchs[i] = Rik[i]; //力行VR値
+    }
+  } else if (nonum == 0) {
+    Serial.println("Error! You must put 'RevHowMany()' before 'RevPinValue()'!");
+  } else {
+    Serial.println("Error! You must put natual number in 'RevHowMany()'!");
+  }
+}
+void RevPinValue(int Rik[], int Sei[], int Yok[]) {
+  if (brnum > 0) {
+    for (int i = 0; i < brnum; i++) {
+      brakes[i] = Sei[i]; //制動VR値
+    }
+  } else if (brnum == 0) {
+    Serial.println("Error! You must put 'RevHowMany()' before 'RevPinValue()'!");
+  } else {
+    Serial.println("Error! You must put natual number in 'RevHowMany()'!");
+  }
+
+  if (nonum > 0) {
+    for (int i = 0; i < nonum; i++) {
+      notchs[i] = Rik[i]; //力行VR値
+    }
+  } else if (nonum == 0) {
+    Serial.println("Error! You must put 'RevHowMany()' before 'RevPinValue()'!");
+  } else {
+    Serial.println("Error! You must put natual number in 'RevHowMany()'!");
+  }
+  if (yonum > 0) {
+    for (int i = 0; i < yonum; i++) {
+      yokus[i] = Yok[i]; //抑速VR値
+    }
+  } else if (yonum == 0) {
+    Serial.println("Error! You must put 'RevHowMany()' before 'RevPinValue()'!");
+  } else {
+    Serial.println("Error! You must put natual number in 'RevHowMany()'!");
+  }
 
 }
 
-void GIPISetup(int revF, int revN, int revR, int baud) {
+void RevHowMany(int Mas, int Bre) {
+  //各段数
+  if (Mas > 0 && Bre > 0) {
+    brnum = Bre;
+    nonum = Mas;
+  } else {
+    Serial.println("Error! You must put natual number in 'RevHowMany()'!");
+  }
+}
+
+void RevHowMany(int Mas, int Bre, int Yok) {
+  if (Mas > 0 && Bre > 0 && Yok > 0) {
+    brnum = Bre;
+    nonum = Mas;
+    yonum = Yok;
+  } else {
+    Serial.println("Error! You must put natual number in 'RevHowMany()'!");
+  }
 
 }
 
@@ -95,18 +209,18 @@ void masconhand() {
   //brakecommand
   for (int i = 0; i <= brnum; i++) {
     if (i == 0) {
-      a = (brake[1] - brake[0]) / 2;
-      a = a + brake[0];
+      a = (brakes[1] - brakes[0]) / 2;
+      a = a + brakes[0];
       if (brkal < a) {
         brcom(0);
         goto brout;
       }
     }
     else if (i < (brnum - 1)) {
-      a = (brake[i + 1] - brake[i]) / 2;
-      a = a + brake[i];
-      b = (brake[i] - brake[i - 1]) / 2;
-      b = b + brake[i - 1];
+      a = (brakes[i + 1] - brakes[i]) / 2;
+      a = a + brakes[i];
+      b = (brakes[i] - brakes[i - 1]) / 2;
+      b = b + brakes[i - 1];
       if (brkal > b && brkal < a) {
         //int s = 50 + i;
         //mascom(s);
@@ -125,18 +239,18 @@ brout:
   //notchcommand
   for (int i = 0; i <= nonum; i++) {
     if (i == 0) {
-      a = (notch[0] - notch[1]) / 2;
-      a = a + notch[1];
+      a = (notchs[0] - notchs[1]) / 2;
+      a = a + notchs[1];
       if (masal > a) {
         nocom(0);
         goto out;
       }
     }
     else if (i < (nonum - 1)) {
-      a = (notch[i - 1] - notch[i]) / 2;
-      a = a + notch[i];
-      b = (notch[i] - notch[i + 1]) / 2;
-      b = b + notch[i + 1];
+      a = (notchs[i - 1] - notchs[i]) / 2;
+      a = a + notchs[i];
+      b = (notchs[i] - notchs[i + 1]) / 2;
+      b = b + notchs[i + 1];
       if (masal > b && masal < a) {
         nocom(i);
         goto out;

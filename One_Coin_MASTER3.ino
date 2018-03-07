@@ -29,8 +29,7 @@ void setup() {
   //}
   Serial.begin(9600);
   while (!Serial);
-  sikiFN = levN + (levF - levN) / 2;
-  sikiNR = levN - (levN - levR) / 2;
+  
   Serial.print("TORN\r");
   nocom(1);
   nocom(0);

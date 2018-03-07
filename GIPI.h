@@ -33,12 +33,18 @@ void ButtonRead();//全部Readする
 void ButtonRead(int);//指定された番号だけReadする
 void ButtonRead(int, int);//ボタン番号、役割
 
-void RevPinSet(int, int);//レバー サー、マスコン
-void RevPinSet(int, int, int);//レバーサー、力行ハンドル、制動ハンドル
+void KeySet(int, int[], int[]);//個数、ピン番号、役割
+void KeyRead();//全部Readする
+void KeyRead(int);//指定された番号だけReadする
+void KeyRead(int, int);//ボタン番号、役割
+
+
+void RevPinSet(int, int, int);//レバーサー、力行ハンドル、制動ハンドル  のピン番号
 void RevPinSet(int, int, int, int);//レバーサー、力行ハンドル、制動ハンドル、抑速ハンドル
-void RevPinValue(int[], int[]);
+void RevPinValue(int[], int[]);//各段AnalogRead値(力行, 制動)
 void RevPinValue(int[], int[], int[]);
-void RevPinValue(int[], int[], int[], int[]);
+void RevHowMany(int, int); //各段個数(力行, 制動)
+void RevHowMany(int, int, int);
 void masconhand();
 void brcom(int);
 void nocom(int);
