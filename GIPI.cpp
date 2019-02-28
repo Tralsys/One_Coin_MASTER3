@@ -40,7 +40,6 @@ void GIPISetup(int levF, int levN, int levR) {
   sikiFN = levN + (levF - levN) / 2;//levN>levFでも対応。
   sikiNR = levN - (levN - levR) / 2;
 }
-
 void GIPISetup(int levF, int levN, int levR, int baud) {
   //levX::レバーサーXの可変抵抗値。
   Serial.begin(baud);
@@ -48,6 +47,7 @@ void GIPISetup(int levF, int levN, int levR, int baud) {
   sikiFN = levN + (levF - levN) / 2;
   sikiNR = levN - (levN - levR) / 2;
 }
+
 void RevPinSet(int Rev, int Rik, int Sei) {
   //レバーサー、力行ハンドル、制動ハンドル  のピン番号
   rever = Rev; //Pin Num
@@ -62,6 +62,7 @@ void RevPinSet(int Rev, int Rik, int Sei, int Yok) {
   yokusp = Yok; //Pin Num
 
 }
+
 void RevPinValue(int Rik[], int Sei[]) {
   //各段AnalogRead値(力行, 制動)
   if (brnum > 0) {
@@ -124,7 +125,6 @@ void RevHowMany(int Mas, int Bre) {
     Serial.println("Error! You must put natual number in 'RevHowMany()'!");
   }
 }
-
 void RevHowMany(int Mas, int Bre, int Yok) {
   if (Mas > 0 && Bre > 0 && Yok > 0) {
     brnum = Bre;
@@ -186,7 +186,6 @@ void ButtonRead(int i) {
     }
   }
 }
-
 void ButtonRead(int i, int ThisBtWork) {
   //ピン番号、役割
   //Historyにかかわらず送信するため利用時はino側での対策推奨
@@ -265,6 +264,7 @@ brout:
 out:
   delay(5);
 }
+
 void brcom(int command) {
   if (wh != command) {
     Serial.print("TOB");
@@ -273,6 +273,7 @@ void brcom(int command) {
     wh = command;
   }
 }
+
 void nocom(int command) {
   if (wh2 != command) {
     Serial.print("TOP");
@@ -282,6 +283,7 @@ void nocom(int command) {
   }
 
 }
+
 void reverser() {
   if (reval > sikiFN && rev != 2) {
     Serial.print("TORF\r");
@@ -294,6 +296,7 @@ void reverser() {
     rev = 0;
   }
 }
+
 void ave() {
   reval = 0;
   masal = 0;

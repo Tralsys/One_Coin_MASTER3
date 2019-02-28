@@ -2,6 +2,7 @@
 //Tech Otter(https://technotter.com)
 //Tetsu Otter(https://twitter.com/tetsu_otter)
 #include "GIPI.h"
+#include "arduino.h"
 const int rever = A0; //"A1"にレバーサー可変抵抗を接続したピンを入力してください。
 const int mascon = A2; //"A2"にノッチ可変抵抗を接続したピンを入力してください。1ハンドルの場合は下と同じピンを指定してください。
 const int brakevr = A2;//"A2"にブレーキ可変抵抗を接続したピンを入力してください。1ハンドルの場合は上と同じピンを指定してください。
